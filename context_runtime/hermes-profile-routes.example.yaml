@@ -1,0 +1,19 @@
+# Example only. Merge into the default profile's config.yaml after review.
+# Keep the Telegram bot token ONLY in the default, restricted profile.
+# Named profiles have independent MCP connections, credentials, and memory.
+gateway:
+  multiplex_profiles: true
+  profile_routes:
+    - name: owner-private-dm
+      platform: telegram
+      user_id: "OWNER_TELEGRAM_ID"
+      chat_id: "OWNER_TELEGRAM_ID"
+      profile: adam-owner
+    - name: client-private-dm
+      platform: telegram
+      user_id: "CLIENT_TELEGRAM_ID"
+      chat_id: "CLIENT_TELEGRAM_ID"
+      profile: adam-client
+    - name: deny-all-other-telegram
+      platform: telegram
+      profile: adam-restricted

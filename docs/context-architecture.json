@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Adam context architecture — target design",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [1170, 650]
+  },
+  "components": [
+    { "id": "conversation", "type": "frontend", "label": "Conversation", "sublabel": "Same Telegram bot", "pos": [35, 280], "size": [150, 70] },
+    { "id": "hermes", "type": "backend", "label": "Adam / Hermes", "sublabel": "Reason and act", "pos": [285, 280], "size": [160, 70] },
+    { "id": "context", "type": "backend", "label": "Context service", "sublabel": "Scope, search, cite", "pos": [570, 280], "size": [175, 70] },
+    { "id": "ledger", "type": "database", "label": "PostgreSQL", "sublabel": "adam_info / provenance", "pos": [965, 280], "size": [175, 70] },
+    { "id": "recall", "type": "database", "label": "Hindsight", "sublabel": "Experience and reflection", "pos": [570, 55], "size": [175, 70] },
+    { "id": "documents", "type": "database", "label": "OpenViking", "sublabel": "Tiered document context", "pos": [570, 510], "size": [175, 70] },
+    { "id": "live", "type": "external", "label": "Live connectors", "sublabel": "ERP, mail, calendar, APIs", "pos": [965, 55], "size": [175, 70] },
+    { "id": "originals", "type": "external", "label": "Original files", "sublabel": "Authorized versioned sources", "pos": [965, 510], "size": [175, 70] },
+    { "id": "missions", "type": "backend", "label": "Mission coordinator", "sublabel": "State and verification", "pos": [285, 55], "size": [160, 70] }
+  ],
+  "connections": [
+    { "from": "conversation", "to": "hermes", "label": "objective", "variant": "emphasis" },
+    { "from": "hermes", "to": "context", "label": "scoped tools", "variant": "emphasis" },
+    { "from": "context", "to": "ledger", "label": "records and history", "variant": "emphasis", "labelDy": 30 },
+    { "from": "hermes", "to": "missions", "label": "resume mission" },
+    { "from": "context", "to": "recall", "label": "bounded recall" },
+    { "from": "context", "to": "documents", "label": "summary, then detail", "labelDy": 100 },
+    { "from": "context", "to": "live", "label": "current facts" },
+    { "from": "originals", "to": "documents", "label": "approved versions", "variant": "dashed" }
+  ]
+}

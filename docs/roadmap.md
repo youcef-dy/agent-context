@@ -1,0 +1,82 @@
+# Implementation phases and delivery status
+
+## Current repository
+
+| Area | Delivered | Still required before live use |
+| --- | --- | --- |
+| Architecture | Source-reviewed design, component ownership, diagram, requirements | Owner review of rollout decisions |
+| Retrieval | Scope validation, priorities, budgets, deduplication, conflicts, timestamps | Production source mapping, token metrics, concurrency/deadlines |
+| PostgreSQL | Restricted read/history adapter and proposed document manifest | Existing core connection test, manifest migration/restore exercise |
+| Hindsight | Owner recall REST adapter and contract tests | Sized service, bank credentials, real recall/retention/reflect tests |
+| OpenViking | Approved search/detail adapter, text integrity and revocation checks | Parser/ingestion workflow, immutable index, L1 adapter and recovery tests |
+| Project understanding | Observations, exact/alias resolution, fuzzy suggestions | Persistent registry, evidence search across history/semantic providers |
+| Identity | Per-profile credential-to-principal library | Same-bot gateway routing and wrong-user acceptance tests |
+| Artifact context | Scoped dependency impact analysis | Persistent artifact edges and coordinator integration |
+| Operations | Packaging, offline demo, CI configuration, rollout/recovery guide | Deployed MCP host, load testing, real end-to-end acceptance |
+
+## Phase 1: Package and validate the foundation
+
+Publish this standalone repository, run synthetic tests and the offline demo,
+and review architecture against the requirements. Keep the prior operations
+repository as the deployment history. Do not copy its private transcripts,
+environment files, keys, screenshots, or administrative scripts.
+
+## Phase 2: Bind the existing bot to scoped context
+
+Use the existing Telegram bot. Route authorized private users to isolated
+Hermes profiles and scoped service credentials. A restricted default route
+must have no owner memory. Connect PostgreSQL reads first through the existing
+restricted role. Prove wrong-user, wrong-company and group-chat behavior.
+
+Exit: a permitted user retrieves a known source; another user cannot retrieve
+it; reads do not require confirmation or silently persist audit records.
+
+## Phase 3: Durable context and learning
+
+Add reviewed entity, rule, registry and artifact records to `adam_info` through
+additive migrations. Reuse existing source/version/history records. Connect
+confirmation in the existing conversation to the reviewed write operation.
+Add payload-bound idempotency, revisions and source evidence to every write.
+
+Exit: a correction survives a new session, history shows original source and
+approval reference, and a duplicate confirmed operation does not duplicate data.
+
+## Phase 4: Hindsight experience recall
+
+Choose remote/cloud or separately sized self-hosting. Pin provider versions.
+Start with a synthetic, isolated owner bank. Verify retain, recall, optional
+reflect, provenance, deletion, restart recovery and inference cost. Enable
+retention only for the approved data policy and selected conversation scope.
+
+Exit: a permitted past event is recalled across sessions; unrelated user memory
+is inaccessible; provider failure leaves other context functions available.
+
+## Phase 5: OpenViking document pipeline
+
+Build approved ingestion from an authorized source directory/storage connector.
+Preserve original references, versions, content hashes and extracted-text
+hashes. Track asynchronous indexing to completion. Test categorization,
+abstract-to-detail escalation, duplicates, reindex and revocation.
+
+Exit: questions retrieve correct source versions with lower measured context
+volume than loading full documents; modified or revoked versions are blocked.
+
+## Phase 6: Live sources and cross-source understanding
+
+Connect the actual ERP only after its identity and API authorization are known.
+Add other connectors as relevant workflows need them. Wire history, aliases,
+relationships and semantic candidates into the clarification loop. Connect
+artifact impact results and mission context bundles to the coordinator.
+
+Exit: Adam can resolve an implicit reference from permitted evidence, ask when
+ambiguity remains, and cite live facts alongside document and memory evidence.
+
+## Phase 7: Production acceptance and recovery
+
+Run representative adversarial, outage, duplicate-delivery, resource and
+restore tests. Test the actual Telegram experience and same-conversation
+confirmation. Keep measurements and pinned configuration with each rollout.
+Declare each provider live only after its complete path has been exercised.
+
+Publishing the design and passing mocked adapter tests complete Phase 1, not
+all seven phases. Runtime deployment follows a separately reviewed rollout.

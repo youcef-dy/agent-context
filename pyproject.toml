@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "adam-agent-context"
+version = "0.1.0"
+description = "Scoped context retrieval foundation and architecture for Adam"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+postgres = ["psycopg2-binary>=2.9,<3", "certifi>=2024.2.2"]
+
+[tool.setuptools.packages.find]
+include = ["context_runtime*"]
+
+[tool.setuptools.package-data]
+context_runtime = ["*.sql", "*.yaml"]

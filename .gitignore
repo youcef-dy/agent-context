@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+.venv*/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.coverage
+*.db
+*.db-wal
+*.db-shm
+*.pem
+*.key
+local/
+docs/*.visual-check.*
