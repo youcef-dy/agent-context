@@ -74,6 +74,20 @@ class ProviderTests(unittest.TestCase):
                 client.post(path, {})
         client.transport.open.assert_not_called()
 
+    def test_provider_auth_headers_are_explicit(self):
+        transport = MagicMock()
+        response = transport.open.return_value.__enter__.return_value
+        response.status = 200
+        response.read.return_value = b'{"result": {"resources": []}}'
+        viking = JsonHttp("https://viking.example", "synthetic-key",
+                          auth_header="X-API-Key", transport=transport)
+        viking.post("/api/v1/search/find", {"query": "synthetic"})
+        sent = transport.open.call_args.args[0]
+        self.assertEqual(sent.get_header("X-api-key"), "synthetic-key")
+        self.assertIsNone(sent.get_header("Authorization"))
+        with self.assertRaises(ValueError):
+            JsonHttp("https://viking.example", "synthetic-key", auth_header="X-Other")
+
     def test_document_index_drift_is_detected_before_return(self):
         uri = "viking://resources/owner/version-1/doc.md"
         manifest = MagicMock()

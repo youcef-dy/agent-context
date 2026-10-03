@@ -25,15 +25,22 @@ class NoRedirect(HTTPRedirectHandler):
 class JsonHttp:
     """Fixed-base HTTPS client; loopback HTTP is allowed for a private pilot."""
 
-    def __init__(self, base_url: str, api_key: str, *, transport=None):
+    def __init__(self, base_url: str, api_key: str, *, auth_header: str = "Authorization", transport=None):
         parsed = urlsplit(base_url)
         loopback = parsed.scheme == "http" and parsed.hostname in {"127.0.0.1", "localhost"}
         if not (parsed.scheme == "https" or loopback) or not parsed.hostname or parsed.username or parsed.password or parsed.path not in {"", "/"} or parsed.query or parsed.fragment:
             raise ValueError("context service URL must be HTTPS or loopback HTTP origin")
         if not api_key or "\n" in api_key or "\r" in api_key:
             raise ValueError("service token is required")
+        if auth_header not in {"Authorization", "X-API-Key"}:
+            raise ValueError("unsupported context service authentication")
         self.base_url, self.api_key = base_url.rstrip("/"), api_key
+        self.auth_header = auth_header
         self.transport = transport or build_opener(ProxyHandler({}), NoRedirect(), HTTPSHandler(context=ssl.create_default_context()))
+
+    def _auth(self) -> dict[str, str]:
+        value = "Bearer " + self.api_key if self.auth_header == "Authorization" else self.api_key
+        return {self.auth_header: value}
 
     def _read_json(self, request: Request) -> dict:
         try:
@@ -61,15 +68,14 @@ class JsonHttp:
         if len(body) > 4096:
             raise ValueError("context request too large")
         request = Request(self.base_url + path, data=body, method="POST", headers={
-            "Authorization": "Bearer " + self.api_key, "Content-Type": "application/json",
-            "Accept": "application/json"})
+            **self._auth(), "Content-Type": "application/json", "Accept": "application/json"})
         return self._read_json(request)
 
     def get(self, path: str, params: dict[str, str]) -> dict:
         if path != "/api/v1/content/read" or set(params) != {"uri"}:
             raise ValueError("unreviewed context read endpoint")
         request = Request(self.base_url + path + "?" + urlencode(params), method="GET", headers={
-            "Authorization": "Bearer " + self.api_key, "Accept": "application/json"})
+            **self._auth(), "Accept": "application/json"})
         return self._read_json(request)
 
 

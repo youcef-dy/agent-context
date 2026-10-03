@@ -27,6 +27,12 @@ OPENVIKING_API_URL
 OPENVIKING_API_KEY
 ```
 
+Use `Authorization: Bearer` for Hindsight and `X-API-Key` for OpenViking
+search/content reads. OpenViking's root key is for administration; provision
+an account/user data key for this adapter. The `JsonHttp` constructor defaults
+to bearer auth; pass `auth_header="X-API-Key"` for OpenViking. Do not confuse
+an API key for the OpenViking service with separate embedding/VLM model keys.
+
 Principal bindings, bank mappings and collection prefixes are trusted
 configuration. Use one profile credential per permitted identity/scope. Keep
 admin migration credentials outside the running agent/service. Do not log

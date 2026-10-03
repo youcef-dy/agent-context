@@ -27,6 +27,7 @@ completion checks. Secrets stay in the configured vault.
 - [Data and integration contracts](docs/contracts.md)
 - [Implementation phases and current status](docs/roadmap.md)
 - [Deployment and recovery](docs/operations.md)
+- [Observed production status](docs/production-status.md)
 
 ## Run the reference code
 
@@ -46,7 +47,7 @@ No network connection or database migration is made by the demo or tests.
 ## Delivery status
 
 This repository is a **design plus tested reference implementation**. It is
-not a deployed context service. The earlier owner-only PostgreSQL core remains
+not a deployed three-provider context service. The earlier owner-only PostgreSQL core remains
 in the Adam operations repository; it is integrated here through a port rather
 than copied with deployment credentials or infrastructure administration code.
 Hindsight runtime integration, authorized ingestion, persistent project and
