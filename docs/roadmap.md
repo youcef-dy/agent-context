@@ -7,7 +7,7 @@
 | Architecture | Source-reviewed design, component ownership, diagram, requirements | Owner review of rollout decisions |
 | Retrieval | Scope validation, priorities, budgets, deduplication, conflicts, timestamps | Production source mapping, token metrics, concurrency/deadlines |
 | PostgreSQL | Restricted read/history adapter and proposed document manifest | Existing core connection test, manifest migration/restore exercise |
-| Hindsight | Owner recall REST adapter and contract tests | Sized service, bank credentials, real recall/retention/reflect tests |
+| Hindsight | Owner recall REST adapter; private API-only VPS pilot; synthetic auth, retain/recall and restart checks | Gateway/service isolation for two senders, production database and backup, deletion/load/cost tests, real session validation |
 | OpenViking | Approved search/detail adapter, text integrity and revocation checks | Parser/ingestion workflow, immutable index, L1 adapter and recovery tests |
 | Project understanding | Observations, exact/alias resolution, fuzzy suggestions | Persistent registry, evidence search across history/semantic providers |
 | Identity | Per-profile credential-to-principal library | Same-bot gateway routing and wrong-user acceptance tests |
@@ -43,9 +43,10 @@ approval reference, and a duplicate confirmed operation does not duplicate data.
 
 ## Phase 4: Hindsight experience recall
 
-Choose remote/cloud or separately sized self-hosting. Pin provider versions.
-Start with a synthetic, isolated owner bank. Verify retain, recall, optional
-reflect, provenance, deletion, restart recovery and inference cost. Enable
+The self-hosted API-only pilot is pinned and its synthetic bank passed retain,
+recall and restart checks. Next, provision a backed-up production database,
+separate sender scopes, and verify reflect, provenance, deletion, load and
+inference cost. Enable
 retention only for the approved data policy and selected conversation scope.
 
 Exit: a permitted past event is recalled across sessions; unrelated user memory

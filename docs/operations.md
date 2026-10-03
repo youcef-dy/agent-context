@@ -13,6 +13,40 @@ Do not bundle their full default stacks into Hermes's constrained container.
 Measure steady RAM, peak parsing/indexing RAM, disk growth, latency and provider
 cost. Set explicit container limits and retain headroom for Hermes and the OS.
 
+## Hindsight pilot on the VPS
+
+The Hindsight API-only image is pinned by digest in `ops/deploy_hindsight_vps.py`.
+It runs as `adam-hindsight` with no published ports, connected to
+`adam-hermes-broker` for private access and `adam-render-egress` for the Gemini
+API. Local models handle embeddings and reranking; Gemini handles LLM tasks.
+The 2250 MiB memory limit has no additional container swap. A root-only
+`/etc/adam-hindsight.env` holds the instance API token and Gemini key, and
+`adam-hindsight-pg0` persists the pilot database. Do not commit either secret
+or dump the env file into logs.
+
+Run the value-silent checks from an authorized VPS shell as root:
+
+```console
+python3 ops/verify_hindsight_vps.py
+python3 ops/recall_hindsight_smoke.py
+```
+
+The second check reads only the dedicated synthetic bank. `ops/smoke_hindsight_vps.py`
+creates a synthetic fact and is not a routine health check. The service's
+restart policy is `unless-stopped`; after any restart wait for `/health` before
+testing recall. `ops/check_hermes_hindsight_reachability.py` is a credential-free
+health request to run inside Hermes; it returned HTTP 200 in the pilot. A green
+container state alone is insufficient.
+
+This is not yet an Adam-facing memory service. The embedded pg0 volume lacks a
+tested off-host backup/restore path and Hindsight recommends external
+PostgreSQL with pgvector for production. Before enabling the bundled Hermes
+plugin, enforce owner/client isolation at both gateway and service levels;
+the shared API token can access every bank. Test deletion and resource peaks
+under representative load. Do not enable `auto_retain` or `auto_recall` until
+these gates pass. The older full Hindsight image and two stopped start attempts
+remain on the VPS; they are not part of the running path.
+
 ## Configuration and secrets
 
 The reference code does not automatically load `.env`. A service host should

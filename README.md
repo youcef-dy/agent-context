@@ -47,12 +47,16 @@ No network connection or database migration is made by the demo or tests.
 ## Delivery status
 
 This repository is a **design plus tested reference implementation**. It is
-not a deployed three-provider context service. The earlier owner-only PostgreSQL core remains
+not a deployed three-provider context service. The PostgreSQL core is live;
+a private Hindsight VPS pilot has passed synthetic retain/recall and restart
+checks, but is not connected to Hermes or ready for real user data. The earlier
+owner-only PostgreSQL core remains
 in the Adam operations repository; it is integrated here through a port rather
 than copied with deployment credentials or infrastructure administration code.
-Hindsight runtime integration, authorized ingestion, persistent project and
+Hindsight gateway isolation and backup, authorized ingestion, persistent project and
 lineage repositories, the MCP host, and live acceptance tests are rollout work.
 See the [status matrix](docs/roadmap.md) before enabling a capability.
 
-Publication of this repository does not deploy or modify Render, Hermes,
-PostgreSQL, or the Telegram bot.
+Cloning or testing this repository does not deploy or modify Render, Hermes,
+PostgreSQL, or the Telegram bot. The separately operated Hindsight VPS pilot
+does not change Hermes's memory configuration.
