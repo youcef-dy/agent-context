@@ -110,11 +110,14 @@ writes need the established approval path. A transaction/outbox can eventually
 coordinate approved ledger writes and provider projection jobs, but no automatic
 outbox writer is enabled by this repository.
 
-## Future agent-facing tools
+## Agent-facing tools and remaining work
 
-Expose a narrow MCP facade over authenticated service methods:
-`context_search`, `context_history`, `project_resolve`, `document_read`,
-`artifact_impact`, and a capability/status read. The model never supplies an
-actor credential, arbitrary SQL, an arbitrary URL, or a new provider bank.
-Writes use the existing same-conversation approval behavior and a separately
-reviewed write contract. This release is a Python library, not that MCP host.
+The optional, not-yet-deployed MCP host exposes read-only
+`context_provider_status`, `context_bundle`, `context_history`,
+`context_document_read`, and `context_project_resolve`. It fixes the principal
+to `owner`; the model cannot supply an actor credential, SQL, URL, provider
+bank, or company scope. The service token authenticates the host, not an
+individual Telegram sender, so the gateway allowlist is a separate gate.
+Artifact impact, persistent projects, and any writes remain future work.
+Writes retain the same-conversation approval rule and need a separately
+reviewed contract.

@@ -34,11 +34,14 @@ PostgreSQL instance hosts `adam_info`; ERP tables remain owned by the ERP.
 
 ## Retrieval lifecycle
 
-1. The gateway identifies the sender and conversation. A trusted profile or
-   service credential resolves the principal and permitted scopes.
-2. The service receives the objective, selected authorized scope, optional
-   mission/project references, and a result budget. Private conversations of
-   different Telegram users remain separate even with the same bot.
+1. The gateway identifies the sender and conversation. For the initial owner
+   slice, two allowlisted Telegram accounts belong to one human and share a
+   host-fixed `owner` principal. A third sender and group chat must be denied
+   before exposing the tool. Future clients need separate credentials/scopes.
+2. The service receives the objective, authorized scope, optional
+   mission/project references, and a result budget. The current owner facade
+   cannot choose a scope from model text; separate client conversations are a
+   future identity integration.
 3. Search explicit IDs and confirmed aliases, then bounded lexical/fuzzy
    candidates, related entities, relevant recent history, and configured
    semantic sources. Search before asking; names alone do not confirm identity.
@@ -147,10 +150,12 @@ defined approved write path before activation. Provider retention must also
 respect the selected data policy; automatic Hindsight retention stays disabled
 in the initial integration template.
 
-Scope keys distinguish personal and company records. A trusted service maps
-user/profile credentials to scopes. The model may request a permitted scope;
-it cannot create a principal, choose an arbitrary Hindsight bank, or supply
-credentials. Shared machine authentication alone does not identify the sender.
+Scope keys distinguish personal and company records. The current MCP facade
+uses only the owner scope and a host-fixed token; it relies on the Telegram
+gateway allowlist to exclude non-owner senders. Future per-client access needs
+separate credentials and server-side scope checks. The model cannot create a
+principal, choose an arbitrary Hindsight bank, or supply credentials. Shared
+machine authentication alone does not identify the sender.
 
 ## Simplicity and resource choices
 

@@ -23,13 +23,16 @@ class NoRedirect(HTTPRedirectHandler):
 
 
 class JsonHttp:
-    """Fixed-base HTTPS client; loopback HTTP is allowed for a private pilot."""
+    """Fixed-base HTTPS client; explicitly allowlisted private HTTP is opt-in."""
 
-    def __init__(self, base_url: str, api_key: str, *, auth_header: str = "Authorization", transport=None):
+    def __init__(self, base_url: str, api_key: str, *, auth_header: str = "Authorization",
+                 internal_http_hosts: frozenset[str] = frozenset(), transport=None):
         parsed = urlsplit(base_url)
         loopback = parsed.scheme == "http" and parsed.hostname in {"127.0.0.1", "localhost"}
-        if not (parsed.scheme == "https" or loopback) or not parsed.hostname or parsed.username or parsed.password or parsed.path not in {"", "/"} or parsed.query or parsed.fragment:
-            raise ValueError("context service URL must be HTTPS or loopback HTTP origin")
+        internal = (parsed.scheme == "http" and parsed.hostname in internal_http_hosts
+                    and bool(re.fullmatch(r"[a-z0-9][a-z0-9.-]{0,100}", parsed.hostname or "")))
+        if not (parsed.scheme == "https" or loopback or internal) or not parsed.hostname or parsed.username or parsed.password or parsed.path not in {"", "/"} or parsed.query or parsed.fragment:
+            raise ValueError("context service URL must be HTTPS or an explicitly trusted HTTP origin")
         if not api_key or "\n" in api_key or "\r" in api_key:
             raise ValueError("service token is required")
         if auth_header not in {"Authorization", "X-API-Key"}:

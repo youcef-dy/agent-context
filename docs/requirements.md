@@ -15,7 +15,7 @@ Private discussions and production information are deliberately not copied.
 | Traceability | Separate event, capture, approval, retrieval times | Explain when and where a fact entered the system and who confirmed it | Evidence timestamps and history contract |
 | New project understanding | Resource observations, aliases, reviewed mappings and provenance | New service stays an observation until meaning is supported | Catalog tests |
 | Current business facts | Authoritative live connector, bounded company scope | ERP outage cannot silently turn old recall into invoice truth | ERP contract and failure tests; actual ERP API remains |
-| Multiple Telegram users | Trusted profile credentials and isolated scopes | Wrong sender cannot read another user's memory through the same bot | Identity library tests; gateway acceptance remains |
+| One owner on two Telegram accounts | Trusted allowlist and one fixed owner scope; future clients need separate credentials | Both owner IDs work; a third sender and group cannot read owner memory | Host-fixed facade and identity tests; live gateway acceptance remains |
 | Long missions | Context bundle references coordinator checkpoint and evidence | Restart resumes from durable mission frontier with applicable rules | Contract only; mission engine is external work |
 | Corporate documents | Approved brand/template/identity records scoped by company | Correct organization's versioned template is returned | Data contract; connector corpus remains |
 | Artifact dependencies | Versioned edges with cell/slide/section selectors | Dataset change flags only affected model cells and slides | Impact-analysis tests; persistent edges remain |

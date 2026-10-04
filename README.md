@@ -26,6 +26,7 @@ completion checks. Secrets stay in the configured vault.
 - [Requirements and acceptance criteria](docs/requirements.md)
 - [Data and integration contracts](docs/contracts.md)
 - [Implementation phases and current status](docs/roadmap.md)
+- [Final implementation plan](docs/implementation-plan.md)
 - [Deployment and recovery](docs/operations.md)
 - [Observed production status](docs/production-status.md)
 
@@ -39,22 +40,24 @@ python -m unittest discover -s context_runtime -p "test_*.py" -v
 python -m context_runtime.demo
 ```
 
-`context_runtime/` contains a bounded router, a legacy ledger adapter, proposed
+`context_runtime/` contains a bounded router, a restricted ledger adapter, proposed
 ERP contract adapter, OpenViking reads, scoped project resolution, artifact
-impact analysis, and synthetic tests. These are reusable library components.
+impact analysis, and a read-only owner MCP facade. These are reusable library
+components; the MCP facade is **not deployed**.
 No network connection or database migration is made by the demo or tests.
 
 ## Delivery status
 
-This repository is a **design plus tested reference implementation**. It is
-not a deployed three-provider context service. The PostgreSQL core is live;
+This repository is a **design plus tested read-only implementation slice**. It
+is not a deployed three-provider context service. The PostgreSQL core is live;
 a private Hindsight VPS pilot has passed synthetic retain/recall and restart
 checks, but is not connected to Hermes or ready for real user data. The earlier
 owner-only PostgreSQL core remains
 in the Adam operations repository; it is integrated here through a port rather
 than copied with deployment credentials or infrastructure administration code.
-Hindsight gateway isolation and backup, authorized ingestion, persistent project and
-lineage repositories, the MCP host, and live acceptance tests are rollout work.
+Hindsight fresh-instance restore and retention policy, authorized ingestion,
+persistent project and lineage repositories, MCP deployment, and live acceptance
+tests are rollout work.
 See the [status matrix](docs/roadmap.md) before enabling a capability.
 
 Cloning or testing this repository does not deploy or modify Render, Hermes,

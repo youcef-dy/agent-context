@@ -74,6 +74,17 @@ class ProviderTests(unittest.TestCase):
                 client.post(path, {})
         client.transport.open.assert_not_called()
 
+    def test_private_http_requires_explicit_exact_host(self):
+        with self.assertRaises(ValueError):
+            JsonHttp("http://adam-hindsight:8888", "synthetic-token")
+        with self.assertRaises(ValueError):
+            JsonHttp("http://adam-hindsight.evil.example:8888", "synthetic-token",
+                     internal_http_hosts=frozenset({"adam-hindsight"}))
+        client = JsonHttp("http://adam-hindsight:8888", "synthetic-token",
+                          internal_http_hosts=frozenset({"adam-hindsight"}),
+                          transport=MagicMock())
+        self.assertEqual(client.base_url, "http://adam-hindsight:8888")
+
     def test_provider_auth_headers_are_explicit(self):
         transport = MagicMock()
         response = transport.open.return_value.__enter__.return_value

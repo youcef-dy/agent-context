@@ -38,28 +38,38 @@ testing recall. `ops/check_hermes_hindsight_reachability.py` is a credential-fre
 health request to run inside Hermes; it returned HTTP 200 in the pilot. A green
 container state alone is insufficient.
 
-This is not yet an Adam-facing memory service. The embedded pg0 volume lacks a
-tested off-host backup/restore path and Hindsight recommends external
-PostgreSQL with pgvector for production. Before enabling the bundled Hermes
-plugin, enforce owner/client isolation at both gateway and service levels;
-the shared API token can access every bank. Test deletion and resource peaks
-under representative load. Do not enable `auto_retain` or `auto_recall` until
-these gates pass. The older full Hindsight image and two stopped start attempts
-remain on the VPS; they are not part of the running path.
+This is not yet an Adam-facing memory service. The essential encrypted GitHub
+backup now includes a verified Hindsight export, but a fresh-instance restore
+has not been tested and Render PostgreSQL is not covered. Embedded pg0 remains
+a pilot choice; Hindsight recommends external PostgreSQL with pgvector for
+production. The two Telegram IDs belong to one owner, but the current shared
+API token can access every bank. Test the two-ID allowlist, denial of a third
+sender/group, deletion and resource peaks. Automatic retention is explicitly
+off by owner decision; do not turn on a native plugin with default retention.
+The older full Hindsight image and two stopped start attempts remain on the
+VPS; they are not part of the running path.
 
 ## Configuration and secrets
 
-The reference code does not automatically load `.env`. A service host should
-resolve credentials from the existing vault and inject only each adapter's
-required value. Suggested host variable names are:
+The reference code does not automatically load `.env`. The optional
+`context_runtime.serve` process reads only the restricted PostgreSQL DSN from
+its environment and tokens from private files owned by the service user.
+It is not deployed. Its currently supported variables are:
 
 ```text
 ADAM_CONTEXT_READER_DSN
-HINDSIGHT_API_URL
-HINDSIGHT_API_KEY
-OPENVIKING_API_URL
-OPENVIKING_API_KEY
+ADAM_CONTEXT_MCP_TOKEN_FILE
+ADAM_CONTEXT_ALLOWED_HOSTS
+ADAM_CONTEXT_BIND
+ADAM_CONTEXT_HINDSIGHT_URL
+ADAM_CONTEXT_HINDSIGHT_KEY_FILE
+ADAM_CONTEXT_HINDSIGHT_BANK
 ```
+
+The Hindsight variables are optional and must refer to a fixed synthetic bank
+until retention and restore gates pass. OpenViking is not wired into this host
+yet. Keep the MCP endpoint private and require the host-fixed owner token; the
+two Telegram accounts must pass gateway allowlist tests before attachment.
 
 Use `Authorization: Bearer` for Hindsight and `X-API-Key` for OpenViking
 search/content reads. OpenViking's root key is for administration; provision
@@ -68,13 +78,15 @@ to bearer auth; pass `auth_header="X-API-Key"` for OpenViking. Do not confuse
 an API key for the OpenViking service with separate embedding/VLM model keys.
 
 Principal bindings, bank mappings and collection prefixes are trusted
-configuration. Use one profile credential per permitted identity/scope. Keep
-admin migration credentials outside the running agent/service. Do not log
+configuration. Both current Telegram accounts map to one owner; future clients
+need separate credentials and scopes. Keep admin migration credentials outside
+the running agent/service. Do not log
 connection strings, request bodies, source excerpts or authorization headers.
 
-The same Telegram bot remains the user interface. Treat routing profiles as
-one isolation layer and service-side scope checks as another. Verify both with
-two actual senders and a group chat before granting owner context.
+The same Telegram bot remains the user interface. Its `profile_routes` map is
+empty, so sender isolation currently relies on the allowlist, not separate
+profiles. Verify both owner IDs and rejection of a third ID/group before
+granting the shared profile access to the owner facade.
 
 ## Database migration
 
