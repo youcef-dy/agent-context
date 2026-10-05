@@ -58,6 +58,7 @@ It is not deployed. Its currently supported variables are:
 
 ```text
 ADAM_CONTEXT_READER_DSN
+ADAM_CONTEXT_READER_DSN_FILE
 ADAM_CONTEXT_MCP_TOKEN_FILE
 ADAM_CONTEXT_ALLOWED_HOSTS
 ADAM_CONTEXT_BIND
@@ -70,6 +71,10 @@ The Hindsight variables are optional and must refer to a fixed synthetic bank
 until retention and restore gates pass. OpenViking is not wired into this host
 yet. Keep the MCP endpoint private and require the host-fixed owner token; the
 two Telegram accounts must pass gateway allowlist tests before attachment.
+Use `ADAM_CONTEXT_READER_DSN_FILE` for container deployment so the connection
+string does not appear in Docker's environment inspection. Do not set both
+reader variables. The supplied `Dockerfile` packages only the read-only host;
+it does not create secrets or alter Hermes configuration.
 
 Use `Authorization: Bearer` for Hindsight and `X-API-Key` for OpenViking
 search/content reads. OpenViking's root key is for administration; provision

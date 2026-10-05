@@ -1,14 +1,31 @@
 import asyncio
 import importlib.util
 import unittest
+from unittest.mock import patch
 
 from context_runtime.core import ContextRouter, ContextSourceError
 from context_runtime.mcp_server import BearerOnlyAuth, create_app
 from context_runtime.service import OwnerContextService
+from context_runtime.serve import build_service
 from context_runtime.test_runtime import OWNER, COMPANY, Source, evidence
 
 
 class OwnerServiceTests(unittest.TestCase):
+    def test_reader_dsn_file_is_supported_without_environment_secret(self):
+        settings = {'ADAM_CONTEXT_READER_DSN_FILE': '/run/secrets/reader-dsn',
+                    'ADAM_CONTEXT_MCP_TOKEN_FILE': '/run/secrets/mcp-token',
+                    'ADAM_CONTEXT_ALLOWED_HOSTS': 'adam-context:8765'}
+        def secret(path):
+            return 'postgresql://synthetic-reader' if path.endswith('reader-dsn') else 'a' * 40
+
+        with patch('context_runtime.serve.private_secret', side_effect=secret):
+            service, token, hosts = build_service(settings)
+        self.assertEqual(service.ledger.reader_dsn, 'postgresql://synthetic-reader')
+        self.assertEqual(token, 'a' * 40)
+        self.assertEqual(hosts, ('adam-context:8765',))
+        with self.assertRaises(RuntimeError):
+            build_service({**settings, 'ADAM_CONTEXT_READER_DSN': 'not-allowed'})
+
     def test_fixed_owner_scope_and_bounded_bundle(self):
         service = OwnerContextService(
             principal=OWNER, router=ContextRouter(ledger=Source(evidence('ledger'))))

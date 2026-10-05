@@ -30,6 +30,11 @@ def private_secret(path: str) -> str:
 def build_service(environment: dict[str, str] | None = None) -> tuple[OwnerContextService, str, tuple[str, ...]]:
     env = environment if environment is not None else os.environ
     reader_dsn = env.get('ADAM_CONTEXT_READER_DSN', '')
+    reader_dsn_file = env.get('ADAM_CONTEXT_READER_DSN_FILE', '')
+    if reader_dsn and reader_dsn_file:
+        raise RuntimeError('configure only one restricted PostgreSQL reader source')
+    if reader_dsn_file:
+        reader_dsn = private_secret(reader_dsn_file)
     if not reader_dsn:
         raise RuntimeError('restricted PostgreSQL reader DSN is required')
     token_path = env.get('ADAM_CONTEXT_MCP_TOKEN_FILE', '')
