@@ -7,14 +7,16 @@ an observed status, not a declaration that all context components are live.
 | --- | --- | --- |
 | PostgreSQL `adam_info` | Live through the existing broker. MCP connected; `context_status` and read-only `context_search` succeeded. | Verify the two allowlisted owner IDs and deny a third ID/group before widening access. |
 | Hindsight | Self-hosted API-only pilot runs in private Docker networks. A dedicated synthetic bank passed retain, recall, auth and restart-persistence checks; no Hermes memory provider is active. No real conversation was retained. | Complete fresh-instance restore from the encrypted off-host export, then test deletion, cost, provenance and real-session behavior before retention. |
-| OpenViking | Adapter and synthetic tests only. No configured OpenViking endpoint or credential was found in Hermes's environment. | Pin a server image, configure embedding and VLM models, use a non-root data key, approve a versioned document, then prove indexed retrieval and revocation. |
+| OpenViking | Adapter and synthetic tests only. No configured OpenViking endpoint or credential was found in Hermes's environment. The owner approved no real documents yet. | Pin a server image, configure embedding and VLM models, use a non-root data key, ingest synthetic documents only, then prove indexed retrieval and revocation. |
 | Render metadata | MCP connects and the current `list_services` read succeeded. | Do not infer which service is the ERP from its name. |
 
 The VPS has 2 vCPU, 4 GiB RAM, 80 GiB disk and 2 GiB swap. Hermes has a 3 GiB
 container memory limit, the broker 256 MiB, and Hindsight 2250 MiB (no swap).
-The latest Hindsight sample used about 276 MiB, but host memory available was
-about 559 MiB and 1 GiB of swap was in use. This is not a peak-load
-measurement. Do not add OpenViking here without peak-memory and disk tests.
+In the latest read-only snapshot, Hermes used about 2.19 GiB, Hindsight
+220 MiB, and the broker 33 MiB; host memory available was about 1.0 GiB and
+654 MiB of swap was in use. These are point-in-time values, not a peak-load
+measurement. Do not build or add OpenViking or a second Hindsight instance on
+this 4 GiB host. The possible 8 GiB resize awaits a credit and cost check.
 Swap is an emergency buffer, not capacity planning.
 
 Hindsight uses local embeddings/reranking but the existing Gemini API for
@@ -41,3 +43,8 @@ migration, Hindsight conversation retention, OpenViking
 ingest, Hermes restart, or PostgreSQL/Render write was performed. The only
 Hindsight write was an explicitly synthetic fact in `adam-hindsight-smoke`.
 PostgreSQL and Render writes retain the same-conversation human approval rule.
+
+The owner MCP Dockerfile is source code only: its Python base is pinned by
+digest, server dependencies are locked with hashes, and 48 local synthetic
+tests pass. No image build, container launch, or Hermes attachment has been
+performed.

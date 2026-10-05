@@ -12,6 +12,10 @@ Hindsight and OpenViking require separate sizing and inference configuration.
 Do not bundle their full default stacks into Hermes's constrained container.
 Measure steady RAM, peak parsing/indexing RAM, disk growth, latency and provider
 cost. Set explicit container limits and retain headroom for Hermes and the OS.
+The latest 4 GiB VPS sample had only about 1.0 GiB available while Hermes
+used about 2.19 GiB. Do not build or start OpenViking or an isolated Hindsight
+restore instance there. A proposed 8 GiB resize still requires confirmed
+Hetzner credit/cost and an explicit owner decision.
 
 ## Hindsight pilot on the VPS
 
@@ -74,7 +78,13 @@ two Telegram accounts must pass gateway allowlist tests before attachment.
 Use `ADAM_CONTEXT_READER_DSN_FILE` for container deployment so the connection
 string does not appear in Docker's environment inspection. Do not set both
 reader variables. The supplied `Dockerfile` packages only the read-only host;
-it does not create secrets or alter Hermes configuration.
+it runs as UID 10001 and does not create secrets or alter Hermes configuration.
+Mount each token/DSN file read-only, owned by UID 10001 with no group/other
+read permission; `private_secret` rejects symlinks and broader modes.
+Server dependencies are resolved in `uv.lock` and exported with hashes to
+`requirements-server.txt`; rebuild the export from the lock rather than editing
+pins by hand. The Python base image is pinned by digest; review and update it
+deliberately rather than allowing a mutable tag to change a rollout.
 
 Use `Authorization: Bearer` for Hindsight and `X-API-Key` for OpenViking
 search/content reads. OpenViking's root key is for administration; provision

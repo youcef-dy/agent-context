@@ -1,6 +1,6 @@
 # Production rollout checkpoint — 2026-10-05
 
-Work is paused at the owner's request. This is a handoff record, **not** a
+Work was paused at the owner's request. This is a handoff record, **not** a
 production-readiness declaration. Commit `10e04d3` was the prior tested
 read-only baseline. The staging changes listed below are saved with this
 checkpoint but still need build and live review. Do not resize the VPS, buy a Render service, enable retention, or
@@ -80,3 +80,19 @@ changes. No Docker image was built and no context MCP service was deployed.
 
 Relevant design and gates: [implementation plan](implementation-plan.md),
 [current status](production-status.md), and [operations](operations.md).
+
+## Resume update on 2026-10-05
+
+The read-only facade is still **not deployed**. Its Dockerfile now pins the
+Python base-image digest, installs hash-locked server dependencies, and runs as
+non-root UID 10001. WebSocket requests cannot bypass the HTTP bearer gate.
+The locked local environment passes **48 tests** and the offline synthetic
+demo; no Docker image was built or run.
+
+A later VPS sample showed only about **1.0 GiB available RAM** and 654 MiB
+swap in use while Hermes used about 2.19 GiB. Do not run an OpenViking trial,
+an isolated Hindsight restore, or an image build on this 4 GiB host. The
+essential-backup timer was active with a successful latest run, but a fresh
+restore remains unproven. Hetzner credit and resize cost remain unverified;
+no upgrade or paid alternative is authorized. See [current status](production-status.md)
+for the latest readiness record.

@@ -81,6 +81,22 @@ class OwnerServiceTests(unittest.TestCase):
 
 @unittest.skipUnless(importlib.util.find_spec('starlette'), 'server extra not installed')
 class BearerAuthTests(unittest.TestCase):
+    def test_websocket_cannot_bypass_http_bearer_gate(self):
+        sent = []
+
+        async def app(_scope, _receive, _send):
+            self.fail('unprotected websocket reached the MCP app')
+
+        async def receive():
+            return {'type': 'websocket.connect'}
+
+        async def send(message):
+            sent.append(message)
+
+        asyncio.run(BearerOnlyAuth(app, 'a' * 40)(
+            {'type': 'websocket', 'headers': []}, receive, send))
+        self.assertEqual(sent, [{'type': 'websocket.close', 'code': 4401}])
+
     def request(self, headers, body=b''):
         calls = []
 

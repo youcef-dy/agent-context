@@ -16,9 +16,14 @@ class BearerOnlyAuth:
         self.expected = hashlib.sha256(token.encode()).digest()
 
     async def __call__(self, scope, receive, send):
-        if scope['type'] != 'http':
+        if scope['type'] == 'lifespan':
             await self.app(scope, receive, send)
             return
+        if scope['type'] == 'websocket':
+            await send({'type': 'websocket.close', 'code': 4401})
+            return
+        if scope['type'] != 'http':
+            raise RuntimeError('unsupported context MCP transport')
         from starlette.responses import JSONResponse
 
         headers = scope.get('headers', [])
